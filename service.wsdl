@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions targetNamespace="urn:sap-com:document:sap:rfc:functions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="urn:sap-com:document:sap:rfc:functions" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+ <wsdl:documentation>
+  <sidl:sidl xmlns:sidl="http://www.sap.com/2007/03/sidl"/>
+ </wsdl:documentation>
+ <wsp:UsingPolicy wsdl:required="true"/>
+ <wsp:Policy wsu:Id="IF_IF_ZWS_BALANZA_DIGITAL">
+  <sapsession:Session xmlns:sapsession="http://www.sap.com/webas/630/soap/features/session/">
+   <sapsession:enableSession>false</sapsession:enableSession>
+  </sapsession:Session>
+ </wsp:Policy>
+ <wsp:Policy wsu:Id="OP_IF_OP_ZRFC_BALANZA_DIGITAL_REQUEST">
+  <sapblock:enableBlocking xmlns:sapblock="http://www.sap.com/NW05/soap/features/blocking/">true</sapblock:enableBlocking>
+  <sapcomhnd:enableCommit xmlns:sapcomhnd="http://www.sap.com/NW05/soap/features/commit/">false</sapcomhnd:enableCommit>
+  <saptrhnw05:required xmlns:saptrhnw05="http://www.sap.com/NW05/soap/features/transaction/">no</saptrhnw05:required>
+  <saprmnw05:enableWSRM xmlns:saprmnw05="http://www.sap.com/NW05/soap/features/wsrm/">false</saprmnw05:enableWSRM>
+ </wsp:Policy>
+ <wsp:Policy wsu:Id="OP_IF_OP_ZRFC_BALANZA_DIGITAL_RESPONSE">
+  <sapblock:enableBlocking xmlns:sapblock="http://www.sap.com/NW05/soap/features/blocking/">true</sapblock:enableBlocking>
+  <sapcomhnd:enableCommit xmlns:sapcomhnd="http://www.sap.com/NW05/soap/features/commit/">false</sapcomhnd:enableCommit>
+  <saptrhnw05:required xmlns:saptrhnw05="http://www.sap.com/NW05/soap/features/transaction/">no</saptrhnw05:required>
+  <saprmnw05:enableWSRM xmlns:saprmnw05="http://www.sap.com/NW05/soap/features/wsrm/">false</saprmnw05:enableWSRM>
+ </wsp:Policy>
+ <wsdl:types>
+  <xsd:schema attributeFormDefault="qualified" targetNamespace="urn:sap-com:document:sap:rfc:functions">
+   <xsd:simpleType name="char1">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="1"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="char20">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="20"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="char255">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="255"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="clnt3">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="3"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="date10">
+    <xsd:restriction base="xsd:string">
+     <xsd:maxLength value="10"/>
+     <xsd:pattern value="\d\d\d\d-\d\d-\d\d"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="time">
+    <xsd:restriction base="xsd:time">
+     <xsd:pattern value="[0-9]{2}:[0-9]{2}:[0-9]{2}"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="ZTBMM_REQU_BALAN">
+    <xsd:sequence>
+     <xsd:element name="MANDT" type="tns:clnt3"/>
+     <xsd:element name="PARAMID" type="tns:char20"/>
+     <xsd:element name="DATUM" type="tns:date10"/>
+     <xsd:element name="UZEIT" type="tns:time"/>
+     <xsd:element name="ENQUEUE" type="tns:char1"/>
+     <xsd:element name="REQUEST" type="tns:char255"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ZTBMM_RESP_BALAN">
+    <xsd:sequence>
+     <xsd:element name="MANDT" type="tns:clnt3"/>
+     <xsd:element name="PARAMID" type="tns:char20"/>
+     <xsd:element name="DATUM" type="tns:date10"/>
+     <xsd:element name="UZEIT" type="tns:time"/>
+     <xsd:element name="RESPONSE" type="tns:char255"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="ZRFC_BALANZA_DIGITAL_REQUEST">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="PARAMID" type="tns:char20"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="ZRFC_BALANZA_DIGITAL_REQUESTResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="REQUEST" type="tns:ZTBMM_REQU_BALAN"/>
+      <xsd:element name="SUBRC" type="xsd:int"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="ZRFC_BALANZA_DIGITAL_RESPONSE">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="RESPONSE" type="tns:ZTBMM_RESP_BALAN"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="ZRFC_BALANZA_DIGITAL_RESPONSEResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="SUBRC" type="xsd:int"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </wsdl:types>
+ <wsdl:message name="ZRFC_BALANZA_DIGITAL_REQUEST">
+  <wsdl:part name="parameters" element="tns:ZRFC_BALANZA_DIGITAL_REQUEST"/>
+ </wsdl:message>
+ <wsdl:message name="ZRFC_BALANZA_DIGITAL_REQUESTResponse">
+  <wsdl:part name="parameter" element="tns:ZRFC_BALANZA_DIGITAL_REQUESTResponse"/>
+ </wsdl:message>
+ <wsdl:message name="ZRFC_BALANZA_DIGITAL_RESPONSE">
+  <wsdl:part name="parameters" element="tns:ZRFC_BALANZA_DIGITAL_RESPONSE"/>
+ </wsdl:message>
+ <wsdl:message name="ZRFC_BALANZA_DIGITAL_RESPONSEResponse">
+  <wsdl:part name="parameter" element="tns:ZRFC_BALANZA_DIGITAL_RESPONSEResponse"/>
+ </wsdl:message>
+ <wsdl:portType name="ZWS_BALANZA_DIGITAL">
+  <wsp:Policy>
+   <wsp:PolicyReference URI="#IF_IF_ZWS_BALANZA_DIGITAL"/>
+  </wsp:Policy>
+  <wsdl:operation name="ZRFC_BALANZA_DIGITAL_REQUEST">
+   <wsp:Policy>
+    <wsp:PolicyReference URI="#OP_IF_OP_ZRFC_BALANZA_DIGITAL_REQUEST"/>
+   </wsp:Policy>
+   <wsdl:input message="tns:ZRFC_BALANZA_DIGITAL_REQUEST"/>
+   <wsdl:output message="tns:ZRFC_BALANZA_DIGITAL_REQUESTResponse"/>
+  </wsdl:operation>
+  <wsdl:operation name="ZRFC_BALANZA_DIGITAL_RESPONSE">
+   <wsp:Policy>
+    <wsp:PolicyReference URI="#OP_IF_OP_ZRFC_BALANZA_DIGITAL_RESPONSE"/>
+   </wsp:Policy>
+   <wsdl:input message="tns:ZRFC_BALANZA_DIGITAL_RESPONSE"/>
+   <wsdl:output message="tns:ZRFC_BALANZA_DIGITAL_RESPONSEResponse"/>
+  </wsdl:operation>
+ </wsdl:portType>
+</wsdl:definitions>

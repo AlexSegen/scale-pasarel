@@ -1,0 +1,14 @@
+{
+    "REQUEST": {
+        "FUNC": "0260",
+        "REQUEST": "0200|15000|20|0|0",
+        "WERKS": "WERKS",
+        "VKORG": "VKORG",
+        "UNAME": "UNAME",
+        "POSID": "POSID",
+        "DATUM": "DATUM",
+        "UZEIT": "UZEIT",
+        "TOPER": "R"
+    },
+    "SUBRC": 0
+}
