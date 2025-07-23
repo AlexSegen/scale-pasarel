@@ -82,8 +82,8 @@ const checkRequest = () => {
     
           if (SUBRC !== 0) return;
 
-          // const portReader = new PortReader();
-          //portReader.init();
+          const portReader = new PortReader();
+          portReader.init();
 
           // Escuchar balanza.
           // Si llega valor de la balanza se envía

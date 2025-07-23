@@ -3,9 +3,10 @@ import { SerialPort } from 'serialport';
 import { CONFIG } from '../config.js';
 
 class PortReader {
+
   constructor() {
-    this.port = undefined;
-    this.parser = undefined;
+    this.port;
+    this.parser;
   }
 
   init() {
