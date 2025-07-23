@@ -1,10 +1,9 @@
 import { soap as Soap } from "strong-soap";
 import { soap as fakeSoap } from "./fake-soap.client.js";
 import consola from "consola";
-import { DICTIONARY } from "./pos.js";
-import { getArgs, handlePOSResult } from "../helpers/utils.js";
 import { CONFIG } from "../config.js";
 import { Log } from './logger.js';
+import { PortReader } from './port-reader.js';
 
 let soap;
 
@@ -15,14 +14,12 @@ if (CONFIG.isDev) {
   soap = Soap;
 }
 
-const checkRequest = (data) => {
-  const { VKORG, WERKS, SOAP_USER, SOAP_PASSWORD } = CONFIG;
+const checkRequest = () => {
+  const { SOAP_USER, SOAP_PASSWORD, WORKSTATION_ID } = CONFIG;
 
   const url = "./service.wsdl";
   const requestArgs = {
-    VKORG,
-    WERKS,
-    DATA: data,
+    PARAMID: WORKSTATION_ID,
   };
 
   const options = {};
@@ -38,15 +35,15 @@ const checkRequest = (data) => {
       client.setSecurity(new soap.BasicAuthSecurity(SOAP_USER, SOAP_PASSWORD));
   
       function processData(
-        posResult,
-        { WERKS, VKORG, UNAME, POSID, DATUM, UZEIT, FUNC }
+        posResult, // peso char
+        { PARAMID, DATUM, UZEIT }
       ) {
         const args = {
           RESPONSE: {
-            item: handlePOSResult(
-              { WERKS, VKORG, UNAME, POSID, DATUM, UZEIT, FUNC },
-              posResult
-            ),
+            PARAMID,
+            DATUM,
+            UZEIT,
+            RESPONSE: posResult
           },
         };
   
@@ -84,22 +81,25 @@ const checkRequest = (data) => {
           const { REQUEST, SUBRC } = await result;
     
           if (SUBRC !== 0) return;
+
+          // const portReader = new PortReader();
+          //portReader.init();
+
+          // Escuchar balanza.
+          // Si llega valor de la balanza se envía
+          // validar si nunca llega valor a través de timeout. Ej 15seg
+          // Si supera el timeout, se debe enviar un error al soap.
+          // validar en caso de error, enviar error al soap.
+
     
-          if (!DICTIONARY[REQUEST.FUNC]) {
-            consola.error("Código inválido: " + REQUEST.FUNC, err);
-            return;
-          }
-    
-          const postargs = getArgs(REQUEST.REQUEST);
-    
-          const posResult = await DICTIONARY[REQUEST.FUNC](...postargs);
+          const posResult = 'peso';
           
           if (!posResult) {
-            console.warn('El método del POS no arrojó resultados');
+            consola.warn('No se pudo obtener el peso de la balanza');
             return;
           }
     
-          consola.info("___POS_RESULT___", posResult);
+          consola.info("Peso de la balanza:", posResult);
     
           processData(posResult, REQUEST);
     

@@ -4,11 +4,11 @@ class Client {
     
     setSecurity = (args) => {};
 
-    ZRFC_POS_TBK_REQUEST = (_, callback) => {
+    ZRFC_BALANZA_DIGITAL_REQUEST = (_, callback) => {
         callback(null, getMockData('request', 'soap'));
     }
 
-    ZRFC_POS_TBK_RESPONSE = (_, callback) => {
+    ZRFC_BALANZA_DIGITAL_RESPONSE = (_, callback) => {
         callback(null, {});
     }
 }
