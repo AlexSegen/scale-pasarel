@@ -22,6 +22,8 @@ const checkRequest = () => {
     PARAMID: WORKSTATION_ID,
   };
 
+  const portReader = new PortReader();
+
   const options = {};
 
   try {
@@ -76,32 +78,55 @@ const checkRequest = () => {
             Log(err.message, 'ZRFC_BALANZA_DIGITAL_REQUEST');
             return;
           }
-          consola.success("ZRFC_BALANZA_DIGITAL_REQUEST exitoso", await result);
+          // consola.success("ZRFC_BALANZA_DIGITAL_REQUEST exitoso", await result);
     
           const { REQUEST, SUBRC } = await result;
     
           if (SUBRC !== 0) return;
+          
+                   
+          if(portReader.port?.isOpen) {
+            consola.warn('Puerto ya está abierto');
+            return;
+          }
 
-          const portReader = new PortReader();
-          portReader.init();
+          portReader.init(CONFIG.SERIAL_PORT_NAME, CONFIG.BAUD_RATE);
+ 
+          let posResult = '';
+          let error = '';
+
+          await portReader.onOpen(({data, lastValue, error}) => {
+            console.log('portReader onOpen:', {data, lastValue, error});
+            posResult = lastValue;
+          });
+
+          await portReader.onData((data) => {
+            console.log('portReader onData:', data);
+          });
+
+          await portReader.onError((err) => {
+            error = err;
+            console.log('portReader onError:', err);
+          });
+
 
           // Escuchar balanza.
           // Si llega valor de la balanza se envía
           // validar si nunca llega valor a través de timeout. Ej 15seg
           // Si supera el timeout, se debe enviar un error al soap.
           // validar en caso de error, enviar error al soap.
-
     
-          const posResult = 'peso';
           
-          if (!posResult) {
-            consola.warn('No se pudo obtener el peso de la balanza');
+          if (!posResult || error) {
+            portReader?.close();
+            consola.warn('No se pudo obtener el peso de la balanza', error || '');
             return;
           }
     
           consola.info("Peso de la balanza:", posResult);
+          portReader?.close();
     
-          processData(posResult, REQUEST);
+          // processData(posResult, REQUEST);
     
           return;
           

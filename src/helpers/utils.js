@@ -10,5 +10,3 @@ export async function getMockData(f, m) {
       console.error(`Error reading JSON file: ${err}`);
     }
 }
-
-

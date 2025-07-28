@@ -16,10 +16,10 @@ function startApp() {
       consola.info('Puertos detectados:', ports.map(p => p.path));
     });
 
-    cron.schedule("*/5 * * * * *", async () => {
-      consola.info("CRON ejecutado:", new Date().toISOString());
+   // cron.schedule("*/5 * * * * *", async () => {
+     // consola.info("CRON ejecutado:", new Date().toISOString());
       checkRequest();
-    });
+    //});
 
   } catch (err) {
     consola.error("startApp error", err.message);
