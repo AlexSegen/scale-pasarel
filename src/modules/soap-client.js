@@ -83,7 +83,6 @@ const checkRequest = () => {
           const { REQUEST, SUBRC } = await result;
     
           if (SUBRC !== 0) return;
-          
                    
           if(portReader.port?.isOpen) {
             consola.warn('Puerto ya está abierto');
@@ -95,29 +94,42 @@ const checkRequest = () => {
           let posResult = '';
           let error = '';
 
-          await portReader.onOpen(({data, lastValue, error}) => {
-            console.log('portReader onOpen:', {data, lastValue, error});
+          await portReader.onOpen(async (err) => {
+            if (err) {
+              error = err;
+              console.log('portReader onOpen:', err);
+            }
+
+            await portReader.onError((err) => {
+              error = err;
+              console.log('portReader onError:', err);
+            });
+          });
+
+          await portReader.onData(({ lastValue, data }) => {
+            /* if (!lastValue) {
+              consola.warn('No se obtuvieron datos de la balanza');
+              return;
+            } */
             posResult = lastValue;
           });
-
-          await portReader.onData((data) => {
-            console.log('portReader onData:', data);
-          });
-
-          await portReader.onError((err) => {
-            error = err;
-            console.log('portReader onError:', err);
-          });
-
 
           // Escuchar balanza.
           // Si llega valor de la balanza se envía
           // validar si nunca llega valor a través de timeout. Ej 15seg
           // Si supera el timeout, se debe enviar un error al soap.
           // validar en caso de error, enviar error al soap.
-    
-          
-          if (!posResult || error) {
+
+         const success = await new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (!posResult || error) {
+                return resolve(false);
+              }
+              resolve(true);
+            }, 0);
+          });
+
+          if (!success) {
             portReader?.close();
             consola.warn('No se pudo obtener el peso de la balanza', error || '');
             return;

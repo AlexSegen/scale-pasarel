@@ -3,8 +3,6 @@ dotenv.config();
 
 export const CONFIG = {
     isDev: process.env.NODE_ENV === 'MOCKS',
-    VKORG:  process.env.VKORG,
-    WERKS:  process.env.WERKS,
     WORKSTATION_ID:  process.env.WORKSTATION_ID,
     SOAP_USER: process.env.SOAP_USER,
     SOAP_PASSWORD: process.env.SOAP_PASSWORD,

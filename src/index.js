@@ -12,14 +12,14 @@ function startApp() {
 
     if (!isDev) downloadWSDL();
 
-    SerialPort.list().then(ports => {
+   /*  SerialPort.list().then(ports => {
       consola.info('Puertos detectados:', ports.map(p => p.path));
-    });
+    }); */
 
-   // cron.schedule("*/5 * * * * *", async () => {
-     // consola.info("CRON ejecutado:", new Date().toISOString());
-      checkRequest();
-    //});
+   cron.schedule("*/10 * * * * *", async () => {
+    consola.info("CRON ejecutado:", new Date().toISOString());
+    checkRequest();
+  });
 
   } catch (err) {
     consola.error("startApp error", err.message);

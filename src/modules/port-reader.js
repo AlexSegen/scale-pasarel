@@ -25,22 +25,6 @@ class PortReader {
     this.parser = this.port.pipe(new ReadlineParser({ delimiter: '\n' }));
   }
 
-  processCollectedData(data) {
-    if (data?.length === 0) {
-        consola.info('⏰ Escuchando datos de la balanza...');
-        return {
-          data: [],
-          lastValue: null,
-        };
-      }
-      console.log('🔄 Procesando datos de los últimos 5 segundos:');
-      const lastValue = data[data.length - 1];
-      return {
-        data,
-        lastValue
-      };
-  }
-
   async open() {
     await this.port.open();
     this.isOpen = true;
@@ -55,27 +39,42 @@ class PortReader {
     return new Promise((resolve, reject) => {
       this.parser.on('data', (data) => {
         this.collectedData.push(data.toString().trim());
-        resolve(callback(this.collectedData));
+      });
+
+      return setTimeout(() => {
+        const { data, lastValue } = this.processCollectedData(this.collectedData);
+        this.collectedData = [];
+        return resolve(callback({data, lastValue}));
+      }, 5000);
+    });
+  }
+
+  processCollectedData = data => {
+    if (!data || data?.length === 0) {
+      consola.warn('Sin datos de la balanza...');
+      return {
+        data: [],
+        lastValue: null,
+      };
+    }
+    const lastValue = data[data.length - 1];
+    return {
+      data,
+      lastValue: lastValue[0]
+    };
+  }
+
+  async onOpen(callback) {
+    return new Promise((resolve, reject) => {
+      this.port.on('open', (err) => {
+        consola.info(`⏰Escuchando balanza digital en puerto ${this.PORT_NAME} / ${this.BAUD_RATE} baud.`);
+        resolve({ error: err });
       });
     });
   }
 
   async onError(callback) {
     this.port.on('error', callback);
-  }
-
-  async onOpen(callback) {
-      return new Promise((resolve, reject) => {
-        this.port.on('open', () => {
-          console.log(`Conectado al puerto ${this.PORT_NAME} / ${this.BAUD_RATE} baud.`);
-
-          setInterval(() => {
-            const { data, lastValue, error } = this.processCollectedData(this.collectedData);
-            this.collectedData = [];
-            resolve(callback({data, lastValue, error}));
-          }, 10000);
-        });
-      });
   }
 
   async onClose(callback) {
