@@ -67,7 +67,7 @@ class PortReader {
   async onOpen(callback) {
     return new Promise((resolve, reject) => {
       this.port.on('open', (err) => {
-        consola.start(`⏰Escuchando balanza digital en puerto ${this.PORT_NAME} / ${this.BAUD_RATE} baud.`);
+        consola.box(`📥 Escuchando balanza digital en puerto ${this.PORT_NAME} / ${this.BAUD_RATE} baud.`);
         resolve({ error: err });
       });
     });

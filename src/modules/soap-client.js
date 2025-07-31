@@ -122,7 +122,9 @@ const checkRequest = () => {
 
           if (!success) {
             portReader?.close();
-            consola.warn('No se pudo obtener el peso de la balanza', error || '');
+            if (error) {
+              consola.error('No se pudo obtener el peso de la balanza', error);
+            } 
             return;
           }
     

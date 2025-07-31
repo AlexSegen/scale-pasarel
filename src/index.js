@@ -7,14 +7,14 @@ import { checkRequest, downloadWSDL, Log } from "./modules";
 
 const { isDev } = CONFIG;
 
-function startApp() {
+async function startApp() {
   try {
 
     if (!isDev) downloadWSDL();
 
-   /*  SerialPort.list().then(ports => {
+    await SerialPort.list().then(ports => {
       consola.info('Puertos detectados:', ports.map(p => p.path));
-    }); */
+    });
 
    cron.schedule("*/10 * * * * *", async () => {
     consola.info("CRON ejecutado:", new Date().toISOString());
