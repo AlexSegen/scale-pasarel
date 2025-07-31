@@ -97,28 +97,19 @@ const checkRequest = () => {
           await portReader.onOpen(async (err) => {
             if (err) {
               error = err;
-              console.log('portReader onOpen:', err);
+              Log('portReader onOpen', err);
+              console.error('portReader onOpen:', err);
             }
 
             await portReader.onError((err) => {
               error = err;
-              console.log('portReader onError:', err);
+              Log('portReader onError', err);
+              consola.error('portReader onError: ', err);
             });
           });
 
-          await portReader.onData(({ lastValue, data }) => {
-            /* if (!lastValue) {
-              consola.warn('No se obtuvieron datos de la balanza');
-              return;
-            } */
-            posResult = lastValue;
-          });
+          await portReader.onData(({ lastValue, data }) => (posResult = lastValue));
 
-          // Escuchar balanza.
-          // Si llega valor de la balanza se envía
-          // validar si nunca llega valor a través de timeout. Ej 15seg
-          // Si supera el timeout, se debe enviar un error al soap.
-          // validar en caso de error, enviar error al soap.
 
          const success = await new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -135,7 +126,7 @@ const checkRequest = () => {
             return;
           }
     
-          consola.info("Peso de la balanza:", posResult);
+          consola.success("Peso de la balanza:", posResult);
           portReader?.close();
     
           // processData(posResult, REQUEST);
@@ -153,6 +144,7 @@ const checkRequest = () => {
 
   } catch (err) {
     consola.error('Error en [checkRequest]', err);
+    Log('checkRequest', err);
     return;
   }
 };
