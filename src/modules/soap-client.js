@@ -97,13 +97,13 @@ const checkRequest = () => {
           await portReader.onOpen(async (err) => {
             if (err) {
               error = err;
-              Log('portReader onOpen', err);
+              Log(err.message, 'portReader onOpen');
               console.error('portReader onOpen:', err);
             }
 
             await portReader.onError((err) => {
               error = err;
-              Log('portReader onError', err);
+              Log(err.message, 'portReader onError');
               consola.error('portReader onError: ', err);
             });
           });
@@ -144,7 +144,7 @@ const checkRequest = () => {
 
   } catch (err) {
     consola.error('Error en [checkRequest]', err);
-    Log('checkRequest', err);
+    Log(err.message, 'checkRequest');
     return;
   }
 };
