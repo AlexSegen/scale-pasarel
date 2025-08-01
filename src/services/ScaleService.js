@@ -206,7 +206,8 @@ export class ScaleService {
       // Ensure cleanup even if reading fails
       try {
         // TODO: Uncomment this after testing
-        await this.disconnect();
+        // await this.disconnect();
+        console.log('readWeightWithAutoConnect', error);
       } catch (disconnectError) {
         logger.error('Failed to disconnect after read error', disconnectError, 'ScaleService');
       }
