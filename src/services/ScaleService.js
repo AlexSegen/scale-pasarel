@@ -161,7 +161,7 @@ export class ScaleService {
     }
     
     // If it's a string, extract the first character (original behavior)
-    return reading[0];
+    return reading;
   }
 
   async disconnect() {
@@ -198,12 +198,14 @@ export class ScaleService {
       }
       
       const result = await this.readWeight();
-      await this.disconnect();
+      // TODO: Uncomment this after testing
+      // await this.disconnect();
       
       return result;
     } catch (error) {
       // Ensure cleanup even if reading fails
       try {
+        // TODO: Uncomment this after testing
         await this.disconnect();
       } catch (disconnectError) {
         logger.error('Failed to disconnect after read error', disconnectError, 'ScaleService');

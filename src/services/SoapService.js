@@ -48,7 +48,8 @@ export class SoapService {
 
   async createClient() {
     return new Promise((resolve, reject) => {
-      const url = this.config.wsdlUrl || "./service.wsdl";
+      // TODO: Uncomment this after testing
+      const url = "./service.wsdl" //this.config.wsdlUrl || "./service.wsdl";
       const options = this.config.soapOptions || {};
 
       this.soapLib.createClient(url, options, (err, client) => {
@@ -100,10 +101,10 @@ export class SoapService {
 
       const { REQUEST, SUBRC } = result;
 
-      if (SUBRC !== 0) {
+    /*   if (SUBRC !== 0) {
         logger.info(`No scale reading request pending (SUBRC: ${SUBRC})`, 'SoapService');
         return null;
-      }
+      } */
 
       logger.info('Scale reading request received from SAP', 'SoapService');
       return REQUEST;
