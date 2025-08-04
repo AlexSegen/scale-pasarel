@@ -2,6 +2,7 @@ import { soap as Soap } from "strong-soap";
 import { soap as fakeSoap } from "../modules/fake-soap.client.js";
 import { SoapError, SoapConnectionError, SoapAuthenticationError } from '../errors/CustomErrors.js';
 import { logger } from './LoggerService.js';
+import { cleanScaleData } from '../helpers/utils.js';
 
 export class SoapService {
   constructor(config = {}) {
@@ -129,7 +130,7 @@ export class SoapService {
           PARAMID,
           DATUM,
           UZEIT,
-          RESPONSE: scaleData.weight || scaleData
+          RESPONSE: scaleData.weight ? cleanScaleData(scaleData.weight) : scaleData
         },
       };
 

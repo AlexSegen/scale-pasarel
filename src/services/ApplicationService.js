@@ -4,6 +4,7 @@ import { ScaleService } from './ScaleService.js';
 import { logger } from './LoggerService.js';
 import { AppError, ConfigurationError } from '../errors/CustomErrors.js';
 import { ConfigValidator } from '../config/validation.js';
+import { cleanScaleData, validateFormatNNNdotNNN } from '../helpers/utils.js';
 
 export class ApplicationService {
   constructor(config) {
@@ -148,13 +149,13 @@ export class ApplicationService {
         return;
       }
 
-      if (scaleData.weight && scaleData.weight === '000.000') {
+      if (scaleData.weight && !validateFormatNNNdotNNN(scaleData.weight)) {
         await this.soapService.sendScaleResponse('E003', scaleRequest);
-        logger.warn('Scale is empty', 'ApplicationService');
+        logger.warn(`Invalid weight format: ${scaleData.weight}`	, 'ApplicationService');
         return;
       }
 
-      logger.info(`Weight reading obtained: ${scaleData.weight}`, 'ApplicationService');
+      logger.info(`Weight reading obtained: ${cleanScaleData(scaleData.weight)}`, 'ApplicationService');
 
       // Step 3: Send response back to SAP
       await this.soapService.sendScaleResponse(scaleData, scaleRequest);
