@@ -89,10 +89,11 @@ export class ScaleService {
 
     try {
       return await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
+        // TODO: validate this after testing
+       /*  const timeout = setTimeout(() => {
           this.isReading = false;
           reject(new ScaleTimeoutError(this.portName, this.readTimeout));
-        }, this.readTimeout);
+        }, this.readTimeout); */
 
         const dataHandler = (data) => {
           const trimmedData = data.toString().trim();
@@ -105,7 +106,8 @@ export class ScaleService {
         this.parser.on('data', dataHandler);
 
         setTimeout(() => {
-          clearTimeout(timeout);
+          // TODO: validate this after testing
+          // clearTimeout(timeout);
           this.parser.removeListener('data', dataHandler);
           this.isReading = false;
           

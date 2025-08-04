@@ -143,7 +143,14 @@ export class ApplicationService {
       const scaleData = await this.scaleService.readWeightWithAutoConnect();
       
       if (!scaleData.weight) {
+        await this.soapService.sendScaleResponse('E002', scaleRequest);
         logger.warn('No weight data received from scale', 'ApplicationService');
+        return;
+      }
+
+      if (scaleData.weight && scaleData.weight === '000.000') {
+        await this.soapService.sendScaleResponse('E003', scaleRequest);
+        logger.warn('Scale is empty', 'ApplicationService');
         return;
       }
 
@@ -156,6 +163,7 @@ export class ApplicationService {
       
     } catch (error) {
       // Error handling is done by the caller (cron job)
+      await this.soapService.sendScaleResponse('E001', scaleRequest);
       throw error;
     }
   }

@@ -101,10 +101,10 @@ export class SoapService {
 
       const { REQUEST, SUBRC } = result;
 
-    /*   if (SUBRC !== 0) {
+      if (SUBRC !== 0) {
         logger.info(`No scale reading request pending (SUBRC: ${SUBRC})`, 'SoapService');
         return null;
-      } */
+      }
 
       logger.info('Scale reading request received from SAP', 'SoapService');
       return REQUEST;
