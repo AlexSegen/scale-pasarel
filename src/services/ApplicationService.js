@@ -149,9 +149,15 @@ export class ApplicationService {
         return;
       }
 
-      if (scaleData.weight && !validateFormatNNNdotNNN(scaleData.weight)) {
+      if (!validateFormatNNNdotNNN(scaleData.weight)) {
         await this.soapService.sendScaleResponse('E003', scaleRequest);
         logger.warn(`Invalid weight format: ${scaleData.weight}`	, 'ApplicationService');
+        return;
+      }
+
+      if (cleanScaleData(scaleData.weight) === '000.000') {
+        await this.soapService.sendScaleResponse('E004', scaleRequest);
+        logger.warn(`Scale is empty: ${scaleData.weight}`	, 'ApplicationService');
         return;
       }
 
