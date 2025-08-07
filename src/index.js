@@ -1,31 +1,56 @@
-import cron from "node-cron";
-import consola from "consola";
-import { SerialPort } from 'serialport';
-
 import { CONFIG } from "./config.js";
-import { checkRequest, downloadWSDL, Log } from "./modules";
+import { ApplicationService } from "./services/ApplicationService.js";
+import { logger } from "./services/LoggerService.js";
+import { downloadWSDL } from "./modules/index.js";
 
-const { isDev } = CONFIG;
+class Application {
+  constructor() {
+    this.applicationService = null;
+  }
 
-function startApp() {
-  try {
+  async initialize() {
+    try {
+      // Set up logging level based on environment
+      if (CONFIG.isDev) {
+        logger.setLevel('DEBUG');
+      }
 
-    if (!isDev) downloadWSDL();
+      logger.info('Initializing Scale Pasarel Application', 'Application');
+      
+      // Download WSDL in production mode
+      if (!CONFIG.isDev) {
+        try {
+          await downloadWSDL();
+          logger.info('WSDL downloaded successfully', 'Application');
+        } catch (error) {
+          logger.warn('Failed to download WSDL, will use local file', 'Application');
+        }
+      }
 
-   /*  SerialPort.list().then(ports => {
-      consola.info('Puertos detectados:', ports.map(p => p.path));
-    }); */
+      // Create and start application service
+      this.applicationService = new ApplicationService(CONFIG);
+      await this.applicationService.start();
+      
+      logger.info('Scale Pasarel Application running successfully', 'Application');
+    } catch (error) {
+      logger.error('Failed to initialize application', error, 'Application');
+      process.exit(1);
+    }
+  }
 
-   cron.schedule("*/10 * * * * *", async () => {
-    consola.info("CRON ejecutado:", new Date().toISOString());
-    checkRequest();
-  });
-
-  } catch (err) {
-    consola.error("startApp error", err.message);
-    Log(err.message, "startApp");
-    return;
+  async shutdown() {
+    if (this.applicationService) {
+      await this.applicationService.gracefulShutdown('APPLICATION_SHUTDOWN');
+    }
   }
 }
 
-startApp();
+// Application entry point
+const app = new Application();
+app.initialize().catch((error) => {
+  console.error('Fatal error during application startup:', error);
+  process.exit(1);
+});
+
+// Export for testing or external usage
+export { Application };
