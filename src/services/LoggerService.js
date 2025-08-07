@@ -94,8 +94,10 @@ class LoggerService {
     
     console.log(`${colors[level]}[${level}]${'\x1b[0m'} ${message}`, meta.context ? `(${meta.context})` : '');
     
-    // File output
-    await this.writeToFile(level, formattedMessage);
+    // File output - only for ERROR level
+    if (level === 'ERROR') {
+      await this.writeToFile(level, formattedMessage);
+    }
   }
 
   async error(message, error = null, context = null) {
