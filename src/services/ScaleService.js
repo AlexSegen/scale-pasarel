@@ -89,11 +89,6 @@ export class ScaleService {
 
     try {
       return await new Promise((resolve, reject) => {
-        // TODO: validate this after testing
-       /*  const timeout = setTimeout(() => {
-          this.isReading = false;
-          reject(new ScaleTimeoutError(this.portName, this.readTimeout));
-        }, this.readTimeout); */
 
         const dataHandler = (data) => {
           const trimmedData = data.toString().trim();
@@ -106,8 +101,6 @@ export class ScaleService {
         this.parser.on('data', dataHandler);
 
         setTimeout(() => {
-          // TODO: validate this after testing
-          // clearTimeout(timeout);
           this.parser.removeListener('data', dataHandler);
           this.isReading = false;
           
@@ -200,15 +193,11 @@ export class ScaleService {
       }
       
       const result = await this.readWeight();
-      // TODO: Uncomment this after testing
-      // await this.disconnect();
       
       return result;
     } catch (error) {
       // Ensure cleanup even if reading fails
       try {
-        // TODO: Uncomment this after testing
-        // await this.disconnect();
         console.log('readWeightWithAutoConnect', error);
       } catch (disconnectError) {
         logger.error('Failed to disconnect after read error', disconnectError, 'ScaleService');
