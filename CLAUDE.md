@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build:dev` - Development build with mocks enabled
 - `npm start` - Build and run production application
 - `npm start:dev` - Build and run development application with mocks
+- `npm test` - Currently shows "no test specified" error (no test framework configured)
 
 ## Architecture Overview
 
@@ -85,7 +86,7 @@ Required variables validated at startup (see `.env.template`):
 - `SOAP_USER` - SAP SOAP username (production only)
 - `SOAP_PASSWORD` - SAP SOAP password (production only)
 - `SOAP_URL` - SAP SOAP service URL (production only)
-- `SERIAL_PORT_NAME` - Serial port path (default: COM2)
+- `SERIAL_PORT_NAME` - Serial port path (no default in template, defaults to COM2 in code)
 - `BAUD_RATE` - Communication baud rate (default: 9600, validated against standard rates)
 
 ### Development vs Production Modes
@@ -118,3 +119,16 @@ The refactored architecture maintains 100% backward compatibility:
 - Environment variables unchanged
 - SOAP protocol and data structures unchanged
 - Serial communication protocol unchanged
+
+## Build System
+
+**Parcel Bundler Configuration**:
+- Uses Parcel v2 for bundling with library mode (`@parcel/bundler-library`)
+- Entry point: `src/index.js`
+- Output: `dist/main.js` (main), `dist/module.js` (module)
+- Development builds include mocks via `NODE_ENV=MOCKS`
+- Production builds require actual SAP connectivity and hardware
+
+**No Testing Framework**: Currently no test framework is configured (`npm test` shows error). Consider adding Jest, Mocha, or similar for unit testing.
+
+**No Linting**: No ESLint configuration found at project level. Consider adding for code quality consistency.
