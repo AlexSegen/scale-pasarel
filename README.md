@@ -1,6 +1,6 @@
 # Scale Pasarel
 
-A Node.js middleware service that bridges industrial weighing scales with SAP ERP systems via SOAP web services. The application automatically polls SAP for scale reading requests, communicates with physical scales through serial port connections, and sends weight measurements back to SAP.
+A Node.js middleware service that bridges industrial weighing scales with SAP ERP systems via SOAP web services. The application has been **completely refactored** from a monolithic structure to a modern, modular service-oriented architecture, providing better error handling, logging, and maintainability. It automatically polls SAP for scale reading requests, communicates with physical scales through serial port connections, and sends weight measurements back to SAP.
 
 ## Features
 
@@ -8,12 +8,24 @@ A Node.js middleware service that bridges industrial weighing scales with SAP ER
 - **Serial Communication**: Interfaces with industrial scales through configurable serial port connections
 - **Scheduled Polling**: Runs automated checks every 10 seconds using cron jobs
 - **Development Mode**: Mock mode for testing without physical hardware or SAP connections
-- **Logging**: Comprehensive logging system for monitoring and debugging
-- **Error Handling**: Robust error handling for both SOAP and serial communication failures
+- **Logging**: Structured JSON logging with automatic rotation and configurable levels
+- **Error Handling**: Hierarchical custom error system with typed errors and retry logic
+- **Service-Oriented Architecture**: Modular design with dedicated services for each responsibility
+
+## Recent Refactorization
+
+The application has undergone a complete architectural refactorization, transforming from a monolithic codebase to a modern service-oriented architecture:
+
+- **Separation of Concerns**: Each service (`ApplicationService`, `SoapService`, `ScaleService`, `LoggerService`) has a single responsibility
+- **Promise-Based APIs**: Eliminated callback hell with 100% Promise-based serial communication
+- **Typed Error Handling**: Custom error classes (`SoapError`, `ScaleError`, `ConfigurationError`) for better debugging
+- **Configuration Validation**: Comprehensive startup validation with environment-specific requirements
+- **Resource Management**: Proper connection pooling, graceful shutdown, and cleanup procedures
+- **Observability**: Structured logging with JSON format and automatic log rotation
 
 ## Prerequisites
 
-- **Node.js** (v14 or higher recommended)
+- **Node.js** (v16 or higher recommended)
 - **Industrial Scale** with serial port connectivity
 - **SAP System** with custom SOAP web services configured
 - **Serial Port Access** (COM port on Windows, /dev/tty* on Linux/Mac)
@@ -55,12 +67,14 @@ A Node.js middleware service that bridges industrial weighing scales with SAP ER
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `WORKSTATION_ID` | SAP workstation identifier | - | Yes |
-| `SOAP_USER` | SAP SOAP service username | - | Yes |
-| `SOAP_PASSWORD` | SAP SOAP service password | - | Yes |
-| `SOAP_URL` | SAP SOAP service endpoint URL | - | Yes |
+| `WORKSTATION_ID` | SAP workstation identifier | - | Yes (always) |
+| `SOAP_USER` | SAP SOAP service username | - | Yes (production only) |
+| `SOAP_PASSWORD` | SAP SOAP service password | - | Yes (production only) |
+| `SOAP_URL` | SAP SOAP service endpoint URL | - | Yes (production only) |
 | `SERIAL_PORT_NAME` | Serial port for scale communication | `COM2` | No |
 | `BAUD_RATE` | Serial communication baud rate | `9600` | No |
+
+**Note**: SOAP credentials are only required in production mode. Development mode (`NODE_ENV=MOCKS`) uses mock SOAP responses and can run without SAP connectivity.
 
 ### Serial Port Configuration
 
@@ -119,12 +133,14 @@ npm start
 └─────────────┘             └─────────────┘              └─────────────┘
 ```
 
-### Key Components
+### Key Components (Post-Refactorization)
 
-- **SOAP Client** (`src/modules/soap-client.js`): Handles SAP communication
-- **Port Reader** (`src/modules/port-reader.js`): Manages serial port communication
-- **Configuration** (`src/config.js`): Environment-based settings management
-- **Logger** (`src/modules/logger.js`): Application logging system
+- **ApplicationService** (`src/services/ApplicationService.js`): Main orchestrator managing cron job lifecycle and service coordination
+- **SoapService** (`src/services/SoapService.js`): Handles SAP integration with connection reuse and retry logic
+- **ScaleService** (`src/services/ScaleService.js`): Manages serial port communication with Promise-based API
+- **LoggerService** (`src/services/LoggerService.js`): Structured JSON logging with automatic rotation
+- **Configuration Validation** (`src/config/validation.js`): Comprehensive startup validation with custom error classes
+- **Custom Error System** (`src/errors/CustomErrors.js`): Hierarchical error handling for better debugging
 
 ## Troubleshooting
 
