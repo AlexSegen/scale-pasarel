@@ -13,7 +13,7 @@ Esta es una aplicación que conecta balanzas industriales con sistemas SAP ERP m
 
 1.  **Descargar Aplicación**
 
-- [Descargar Scale Pasarel aquí](https://github.com/AlexSegen/scale-pasarel/archive/refs/tags/ProdReady.zip)
+- [Descargar última versión ZIP de Scale Pasarel aquí](https://github.com/AlexSegen/scale-pasarel/releases)
 - Descromprimir zip descargado
 
 2.  **Instalar dependencias**
